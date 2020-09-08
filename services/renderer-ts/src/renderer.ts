@@ -9,5 +9,9 @@ import html from "rehype-stringify";
 export async function render(src: string): Promise<string> {
   const processor = unified().use(markdown).use(remark2rehype).use(html);
   const { contents } = await processor.process(src);
-  return contents as string;
+  if (contents instanceof Uint8Array) {
+    return new TextDecoder().decode(contents);
+  } else {
+    return contents;
+  }
 }
