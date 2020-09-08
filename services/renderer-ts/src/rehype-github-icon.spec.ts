@@ -3,14 +3,14 @@ import unified from "unified";
 import markdown from "remark-parse";
 import remark2rehype from "remark-rehype";
 import html from "rehype-stringify";
-import custom from "./rehype-custom";
+import githubIcon from "./rehype-github-icon";
 
-describe("render", () => {
+describe("githubIcon", () => {
   it("アイコン記法をimgタグに変換", async () => {
     const processor = unified()
       .use(markdown, { commonmark: true })
       .use(remark2rehype)
-      .use(custom)
+      .use(githubIcon)
       .use(html);
     const userName = "mkizka";
     const { contents } = await processor.process(`[${userName}.icon]`);

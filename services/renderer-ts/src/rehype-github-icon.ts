@@ -9,7 +9,7 @@ type HTMLNode = {
   properties?: { [key: string]: any };
 };
 
-const custom: Attacher = () => {
+const githubIcon: Attacher = () => {
   const transformer: Transformer = (tree, _) => {
     visit<HTMLNode>(tree, "element", (node) => {
       node.children = node.children.map((child) => {
@@ -36,4 +36,4 @@ const custom: Attacher = () => {
   return transformer;
 };
 
-export default custom;
+export default githubIcon;
