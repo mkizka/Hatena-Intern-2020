@@ -1,5 +1,5 @@
 import { Transformer, Attacher } from "unified";
-import visit, { Visitor } from "unist-util-visit";
+import visit from "unist-util-visit";
 
 type HTMLNode = {
   type: string;

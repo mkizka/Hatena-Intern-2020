@@ -2,7 +2,7 @@ import unified from "unified";
 import markdown from "remark-parse";
 import remark2rehype from "remark-rehype";
 import html from "rehype-stringify";
-import custom from "./remark-custom";
+import custom from "./rehype-custom";
 
 /**
  * 受け取った文書を HTML に変換する
