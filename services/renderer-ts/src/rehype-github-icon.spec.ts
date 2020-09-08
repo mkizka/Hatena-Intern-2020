@@ -12,7 +12,7 @@ describe("githubIcon", () => {
       .use(remark2rehype)
       .use(githubIcon)
       .use(html);
-    const userName = "mkizka";
+    const userName = "sample-username";
     const { contents } = await processor.process(`[${userName}.icon]`);
     expect(contents).toBe(
       `<p><img src="https://github.com/${userName}.png" alt="${userName}" style="height: 1.5rem"></p>`

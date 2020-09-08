@@ -14,7 +14,7 @@ const githubIcon: Attacher = () => {
     visit<HTMLNode>(tree, "element", (node) => {
       node.children = node.children.map((child) => {
         if (child.type !== "text") return child;
-        const matched = child.value.match(/\[(\w+)\.icon\]/);
+        const matched = child.value.match(/\[([\w-]+)\.icon\]/);
         if (matched) {
           return {
             type: "element",
