@@ -1,4 +1,4 @@
-name: Fetcher CI
+name: Renderer-Ts CI
 
 on: [push]
 
