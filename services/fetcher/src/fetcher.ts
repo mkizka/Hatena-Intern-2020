@@ -1,10 +1,11 @@
+import request from "superagent";
+import cheerio from "cheerio";
+
 /**
  * 受け取ったURLからタイトルを取得する
  */
 export async function fetch(url: string): Promise<string> {
-  return "title";
-}
-
-function urlToHTMLString(url: string): string {
-  return "html";
+  const response = await request.get(url);
+  const $ = cheerio.load(response.text);
+  return $("title").text();
 }
