@@ -5,25 +5,36 @@ import { FetcherClient } from "../pb/fetcher/fetcher_grpc_pb";
 import { loadConfig } from "./config";
 import { FetchRequest } from "../pb/fetcher/fetcher_pb";
 
-type MarkdownNode = {
+type MarkdownTextNode = {
   type: string;
-  title: string | null;
+  value: string;
+};
+
+type MarkdownLinkNode = {
+  type: string;
   url: string;
+  children: MarkdownTextNode[];
 };
 
 const autoTitle: Attacher = () => {
-  const config = loadConfig();
-  const fetcherClient = new FetcherClient(config.fetcherAddr, grpc.credentials.createInsecure());
-  const transformer: Transformer = (tree, _) => {
-    visit<MarkdownNode>(tree, "link", (node) => {
-      if (!node.title) {
-        const fetchRequest = new FetchRequest();
-        fetchRequest.setUrl(node.url);
-        fetcherClient.fetch(fetchRequest, (err, reply) => {
-          console.log(err);
-          console.log(reply.getTitle());
-        });
-      }
+  const transformer: Transformer = async (tree, _) => {
+    const config = loadConfig();
+    const fetcherClient = new FetcherClient(config.fetcherAddr, grpc.credentials.createInsecure());
+    await new Promise((resolve, reject) => {
+      visit<MarkdownLinkNode>(tree, "link", (node) => {
+        if (node.children.length === 0) {
+          const fetchRequest = new FetchRequest();
+          fetchRequest.setUrl(node.url);
+          fetcherClient.fetch(fetchRequest, (err, reply) => {
+            if (err) reject(err);
+            node.children.push({
+              type: "text",
+              value: reply.getTitle(),
+            });
+            resolve();
+          });
+        }
+      });
     });
   };
   return transformer;
