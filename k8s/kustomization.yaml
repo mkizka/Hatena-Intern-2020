@@ -7,3 +7,4 @@ resources:
 - blog
 - renderer-go
 - renderer-ts
+- fetcher
