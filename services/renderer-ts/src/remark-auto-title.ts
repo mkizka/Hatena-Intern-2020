@@ -1,9 +1,6 @@
-import grpc from "grpc";
 import { Transformer, Attacher } from "unified";
 import visit from "unist-util-visit";
-import { FetcherClient } from "../pb/fetcher/fetcher_grpc_pb";
-import { loadConfig } from "./config";
-import { FetchRequest } from "../pb/fetcher/fetcher_pb";
+import { fetchTitle } from "./fetch-title";
 
 type MarkdownTextNode = {
   type: string;
@@ -18,21 +15,18 @@ type MarkdownLinkNode = {
 
 const autoTitle: Attacher = () => {
   const transformer: Transformer = async (tree, _) => {
-    const config = loadConfig();
-    const fetcherClient = new FetcherClient(config.fetcherAddr, grpc.credentials.createInsecure());
     await new Promise((resolve, reject) => {
       visit<MarkdownLinkNode>(tree, "link", (node) => {
         if (node.children.length === 0) {
-          const fetchRequest = new FetchRequest();
-          fetchRequest.setUrl(node.url);
-          fetcherClient.fetch(fetchRequest, (err, reply) => {
-            if (err) reject(err);
-            node.children.push({
-              type: "text",
-              value: reply.getTitle(),
-            });
-            resolve();
-          });
+          fetchTitle(node.url)
+            .then((title) => {
+              node.children.push({
+                type: "text",
+                value: title,
+              });
+              resolve();
+            })
+            .catch((err) => reject(err));
         }
       });
     });
