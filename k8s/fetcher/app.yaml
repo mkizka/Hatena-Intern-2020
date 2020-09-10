@@ -45,7 +45,7 @@ spec:
             memory: 10Mi
           limits:
             cpu: 200m
-            memory: 20Mi
+            memory: 50Mi
         ports:
         - containerPort: 50051
           name: fetcher
