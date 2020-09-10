@@ -1,4 +1,4 @@
-import { fetch } from "./fetcher";
+import { fetch, removeFragment } from "./fetcher";
 import { cache } from "./cache";
 
 describe("fetcher", () => {
@@ -26,5 +26,27 @@ describe("fetcher", () => {
     await fetch(url, fetcher);
     await fetch(url, fetcher);
     expect(fetcher).toBeCalledTimes(1);
+  });
+
+  it("フラグメントは同一URLとして扱う", async () => {
+    const url = "https://hatenablog.com";
+    const fetcher = jest.fn().mockResolvedValue("<title>はてなブログ</title>");
+    await fetch(url, fetcher);
+    await fetch(`${url}#fragment`, fetcher);
+    expect(fetcher).toBeCalledTimes(1);
+  });
+
+  it("GETクエリパラメータは異なるURLとして扱う", async () => {
+    const url = "https://hatenablog.com";
+    const fetcher = jest.fn().mockResolvedValue("<title>はてなブログ</title>");
+    await fetch(url, fetcher);
+    await fetch(`${url}?param=value`, fetcher);
+    expect(fetcher).toBeCalledTimes(2);
+  });
+
+  it("URLのハッシュ以降を削除する", () => {
+    const url = "https://hatenablog.com";
+    expect(removeFragment(url)).toBe(url);
+    expect(removeFragment(`${url}#fragment`)).toBe(url);
   });
 });
