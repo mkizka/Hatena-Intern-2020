@@ -10,7 +10,7 @@ export async function fetch(
 ): Promise<string> {
   const normalizedUrl = removeFragment(url);
   const cachedTitle = cache.get(normalizedUrl);
-  if (typeof cachedTitle !== "undefined") {
+  if (cachedTitle !== undefined) {
     return cachedTitle;
   }
   try {
