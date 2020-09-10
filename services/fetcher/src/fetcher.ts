@@ -29,6 +29,5 @@ export async function fetch(
  * URLからハッシュ以降を除く
  */
 export function removeFragment(url: string): string {
-  const hashIndex = url.indexOf("#");
-  return hashIndex < 0 ? url : url.slice(0, hashIndex);
+  return url.split("#")[0];
 }
