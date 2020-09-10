@@ -1,5 +1,6 @@
 import health from "grpc-health-check";
 import winston from "winston";
+import request from "superagent";
 import { FetchRequest, FetchReply } from "../pb/fetcher/fetcher_pb";
 import { IFetcherServer } from "../pb/fetcher/fetcher_grpc_pb";
 import { UnaryHandler, unaryHandler, createLoggingMiddleware } from "./server-utils";
@@ -29,7 +30,8 @@ export function createServer(logger: winston.Logger): Server {
  */
 export const handleRender: UnaryHandler<FetchRequest, FetchReply> = async (req) => {
   const url = req.getUrl();
-  const title = await fetch(url);
+  const fetcher = async (url: string) => (await request.get(url)).text;
+  const title = await fetch(url, fetcher);
   const reply = new FetchReply();
   reply.setTitle(title);
   return reply;
