@@ -22,26 +22,35 @@ describe("fetcher", () => {
 
   it("同一URLで複数回要求された場合はキャッシュから返す", async () => {
     const url = "https://hatenablog.com";
-    const fetcher = jest.fn().mockResolvedValue("<title>はてなブログ</title>");
-    await fetch(url, fetcher);
-    await fetch(url, fetcher);
+    const title = "はてなブログ";
+    const fetcher = jest.fn().mockResolvedValue(`<title>${title}</title>`);
+    const title1 = await fetch(url, fetcher);
+    const title2 = await fetch(url, fetcher);
     expect(fetcher).toBeCalledTimes(1);
+    expect(title1).toBe(title);
+    expect(title2).toBe(title);
   });
 
   it("フラグメントは同一URLとして扱う", async () => {
     const url = "https://hatenablog.com";
-    const fetcher = jest.fn().mockResolvedValue("<title>はてなブログ</title>");
-    await fetch(url, fetcher);
-    await fetch(`${url}#fragment`, fetcher);
+    const title = "はてなブログ";
+    const fetcher = jest.fn().mockResolvedValue(`<title>${title}</title>`);
+    const title1 = await fetch(url, fetcher);
+    const title2 = await fetch(`${url}#fragment`, fetcher);
     expect(fetcher).toBeCalledTimes(1);
+    expect(title1).toBe(title);
+    expect(title2).toBe(title);
   });
 
   it("GETクエリパラメータは異なるURLとして扱う", async () => {
     const url = "https://hatenablog.com";
-    const fetcher = jest.fn().mockResolvedValue("<title>はてなブログ</title>");
-    await fetch(url, fetcher);
-    await fetch(`${url}?param=value`, fetcher);
+    const title = "はてなブログ";
+    const fetcher = jest.fn().mockResolvedValue(`<title>${title}</title>`);
+    const title1 = await fetch(url, fetcher);
+    const title2 = await fetch(`${url}?param=value`, fetcher);
     expect(fetcher).toBeCalledTimes(2);
+    expect(title1).toBe(title);
+    expect(title2).toBe(title);
   });
 
   it("URLのハッシュ以降を削除する", () => {
