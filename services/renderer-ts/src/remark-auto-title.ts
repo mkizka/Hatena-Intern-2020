@@ -1,35 +1,17 @@
 import { Transformer, Attacher } from "unified";
 import visit from "unist-util-visit";
 import { fetchTitle } from "./fetch-title";
-
-type MarkdownTextNode = {
-  type: string;
-  value: string;
-};
-
-type MarkdownLinkNode = {
-  type: string;
-  url: string;
-  children: MarkdownTextNode[];
-};
+import { MarkdownLinkNode } from "./unified-utils";
 
 const autoTitle: Attacher = () => {
   const transformer: Transformer = async (tree, _) => {
-    await new Promise((resolve, reject) => {
-      visit<MarkdownLinkNode>(tree, "link", (node) => {
-        if (node.children.length === 0) {
-          fetchTitle(node.url)
-            .then((title) => {
-              node.children.push({
-                type: "text",
-                value: title,
-              });
-              resolve();
-            })
-            .catch((err) => reject(err));
-        }
-      });
+    const promises: Promise<void>[] = [];
+    visit<MarkdownLinkNode>(tree, "link", (node) => {
+      if (node.children.length === 0) {
+        promises.push(fetchTitle(node));
+      }
     });
+    await Promise.all(promises);
   };
   return transformer;
 };
