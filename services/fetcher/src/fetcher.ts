@@ -17,10 +17,10 @@ export async function fetch(
     const text = await fetcher(normalizedUrl);
     const $ = cheerio.load(text);
     const title = $("title").text();
-    cache.set(url, title);
+    cache.set(normalizedUrl, title);
     return title;
   } catch (e) {
-    cache.set(url, "");
+    cache.set(normalizedUrl, "");
     return "";
   }
 }

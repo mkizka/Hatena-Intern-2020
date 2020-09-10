@@ -35,8 +35,8 @@ describe("fetcher", () => {
     const url = "https://hatenablog.com";
     const title = "はてなブログ";
     const fetcher = jest.fn().mockResolvedValue(`<title>${title}</title>`);
-    const title1 = await fetch(url, fetcher);
-    const title2 = await fetch(`${url}#fragment`, fetcher);
+    const title1 = await fetch(`${url}#fragment`, fetcher);
+    const title2 = await fetch(url, fetcher);
     expect(fetcher).toBeCalledTimes(1);
     expect(title1).toBe(title);
     expect(title2).toBe(title);
@@ -46,8 +46,8 @@ describe("fetcher", () => {
     const url = "https://hatenablog.com";
     const title = "はてなブログ";
     const fetcher = jest.fn().mockResolvedValue(`<title>${title}</title>`);
-    const title1 = await fetch(url, fetcher);
-    const title2 = await fetch(`${url}?param=value`, fetcher);
+    const title1 = await fetch(`${url}?param=value`, fetcher);
+    const title2 = await fetch(url, fetcher);
     expect(fetcher).toBeCalledTimes(2);
     expect(title1).toBe(title);
     expect(title2).toBe(title);
