@@ -15,21 +15,19 @@ type MarkdownLinkNode = {
 
 const autoTitle: Attacher = () => {
   const transformer: Transformer = async (tree, _) => {
-    await new Promise((resolve, reject) => {
-      visit<MarkdownLinkNode>(tree, "link", (node) => {
-        if (node.children.length === 0) {
-          fetchTitle(node.url)
-            .then((title) => {
-              node.children.push({
-                type: "text",
-                value: title,
-              });
-              resolve();
-            })
-            .catch((err) => reject(err));
-        }
-      });
+    const promises: Promise<void>[] = [];
+    visit<MarkdownLinkNode>(tree, "link", (node) => {
+      if (node.children.length === 0) {
+        const promise = fetchTitle(node.url).then((title) => {
+          node.children.push({
+            type: "text",
+            value: title,
+          });
+        });
+        promises.push(promise);
+      }
     });
+    await Promise.all(promises);
   };
   return transformer;
 };
